@@ -232,3 +232,151 @@ Memory view is inspired by NumPy, it will change the way multiple bytes are read
 
 **Thread-safe** double-ended queue.
 
+## Dictionary and Set
+
+#### Dict Comprehension
+
+A *dictcomp* is similar to *listcomp*, which creates a *dict* instance by producing key:value pair from any iterable
+
+```python
+ITEM_MAPPING = [(1, "Catan"), (2, "Carcassone"), (3, "Pandemic")]
+d = {item_id: name, for item_id, name in ITEM_MAPPING}
+```
+
+#### Update dict on missing key
+
+```python
+d = {}
+d.setdefault(key, 1)
+# it is equal to the following lines
+if key is not in d:
+    d[key] = 1
+```
+
+#### Lookup dict on missing key
+
+##### defaultdict
+
+*defaultdict* will use a factory method to create an empty object for missing key and return it when *\_\_getitem\_\_* is invoked
+
+```python
+import collections
+# use list as factory method, empty list will be created when no keys found
+dd = collections.defaultdict(list)
+# output: empty list
+dd[1]
+# Only when __getitem__ being invoked (get item by []), it will create empty list
+# Otherwise, None will be returned
+# True
+dd.get(2) is None
+```
+
+##### _\_missing\_\_
+
+if *_\_missing\_\_* is implemented, then *\_\_getitem\_\_* will call it whenever a key is not found, instead of raising *KeyError*
+
+```python
+class NoMissingDict(dict):
+    def __missing__(self, key):
+        print("cannot find key", key)
+
+nmd = NoMissingDict()
+nmd[1]
+```
+
+#### Variations of dict
+
+##### OrderedDict
+
+Keys in insertion order
+
+##### ChainMap
+
+A list of mappings
+
+##### Counter
+
+Mapping holds an integer for each key, update to an existing key will increase to its count
+
+#### UserDict
+
+Designed as a base class to be implemented by user
+
+*UserDict* does not inherit fropm *dict*, but it holds an internal *dict* reference called *data*
+
+```python
+import collections
+
+class MyDict(collections.UserDict):
+
+    def __contains__(self, key):
+        return str(key) in self.data
+
+    def __setitem__(self, key, item):
+        self.data[str(key)] = item
+```
+
+#### Immutable Dict
+
+*MappingProxyType*, a proxy for the underlying mapping, we cannot change the proxy directly, but we can modify the original mapping, and the change can be seen through the proxy
+
+```python
+from types import MappingProxyType
+d = {1: 'A'}
+d_proxy = MappingProxyType(d)
+# d_proxy[1] = 'A'
+# we cannot change the proxy directly like the following line
+# d_proxy[2] = 'B'
+# but we can modify the underlying mapping
+d[2] = 'B'
+# now d_proxy[2] = 'B'
+```
+
+#### Set
+
+```python
+# create set using {1}, {1, 2}
+s = {1}
+# cannot create empty set using {}, that represents dict
+# we need to write set()
+s = set()
+```
+
+##### Set Operation
+
+```python
+s1 = {1, 2, 3, 4, 5}
+s2 = {1, 3}
+e = 1
+
+# intersection
+s1 & s2
+# union
+s1 | s2
+# difference
+s1 - s2
+# xor
+s1 ^ s2
+# predicate operation
+s1 <= s2
+e in s1
+```
+
+Keys must be hashable object in set and dict.
+
+*dict* and *set* has high memory overhead, but is very efficient for search.
+
+#### Hashable
+
+A hashable object must satisfy:
+
+- support *hash()* , the return value must be the same during the lifetime of the object
+- support *eq()*
+- if *a*==*b* is *True*, then *hash(a)* == *hash(b)* must be *True*
+
+Flat data types like *str*, *bytes*, *int* are all hashable
+
+*frozenset* is also hashable because all its elements must hashable by definition
+
+*tuple*, even it is immutale, can only be hashable when all its elements are hashable
+
