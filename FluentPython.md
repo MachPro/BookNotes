@@ -77,14 +77,35 @@ tuple(i for i in symbol)
 
 ##### Tuple Unpacking
 
-Tuple unpacking can be used for parallel assignment, swap variables.
+Tuple unpacking can be used for parallel assignment, variables swap.
+
+```python
+a, b = (1, 2)
+b, a = a, b
+```
 
 Use start (\*) in tuple unpacking
 
+```python
+def add(*args):
+    sum = 0
+    for i in args:
+        sum += i
+
+t = (1,2,3)
+add(*t)
+
+# use * to store excess items
+a, *b = t
+```
+
 ##### Named Tuple
+
+*namedtuple* is a factory that produces subclasses of *tuple* with field names and a class name
 
 ```python
 from collections import namedtuple
+
 Board = namedtuple('Board', ['name', 'price'])
 catan = Board(name='Catan', price=10)
 
@@ -94,3 +115,120 @@ Board._make(data)
 # return ordered dict
 catan._asdict()
 ```
+
+#### Slice and Ellipsis
+
+The notation a : b : c is only valid within [] when used as index or subscript, and it produces a slice object slice(a,b,c)
+
+... is a shortcut for the Ellipsis object
+
+```python
+# if x is a four-dimensional list
+# x[i, ...] is equal to x[i, :, :, :]
+```
+
+##### Assignment to slices
+
+```python
+l = list(range(10))
+# slice can be used to remove and insert elements
+l[2:6] = [11,12]
+# now l is [0, 1, 11, 12, 6, 7, 8 ,9]
+del l[7:8]
+# now l is [0, 1, 11, 12, 6, 7, 8]
+```
+
+#### Operators on Sequences
+
+\+ and \* operator on sequences will create a new sequence
+
+```python
+a = [1, 2]
+b = a * 3
+# b is [1, 2, 1, 2, 1, 2]
+```
+
+For expression like **a \* n**, if a is sequence containing mutable items, then the result will hold reference to the same **a** for n times, any change to the original object will induce change to the result
+
+```python
+a = [['_'] * 2] * 2
+# now a is [['_', '_'], ['_', '_']]
+a[0][1] = '*'
+# now a becomes [['_', '*'], ['_', '*']]
+# True
+a[0] is a[1]
+```
+
+Using list comp will help do the right thing
+
+```python
+a = [['_' * 2] for _ in range(2)]
+a[0][1] = '*'
+# now a is [['_', '*'], ['_', '_']], since it has two different inner reference
+```
+
+#### Augmented Assignment on Sequences
+
+Special method for operator += is \_\_iadd\_\_. If \_\_iadd\_\_ is not implemented, Python will use \_\_add\_\_ instead.
+
+For immutable object, the \_\_iadd\_\_ method is not defined. Its \_\_add\_\_ function will be invoked, and a new object will be created.
+
+For mutable object, if the  \_\_iadd\_\_ method is defined as normal, the value of it will be changed, but the identity remains the same.
+
+```python
+l = [1, 2]
+id1 = id(l)
+l += [3, 4]
+id2 = id(l)
+# True
+id1 == id2
+
+t = (1, 2)
+id1 = id(t)
+t += (3, 4)
+id2 = id(t)
+# False
+id1 == id2
+```
+
+#### Sort
+
+*list.sort* will sort the lis in place and return None.
+
+*sorted* will copy the original list and return it.
+
+#### Search with bisect
+
+bisect and bisect_right will find the last index the target can be inserted into and return the index.
+
+bisect_left will find the first index the target can be inserted into and return the index
+
+```python
+import bisect
+
+l = [1, 2, 4, 4, 5, 7]
+target = 4
+# 4
+bisect.bisect(l, target)
+# 2
+bisect.bisect_left(l, target)
+```
+
+insort can find the index and insert target into the list.
+
+#### Other Sequences
+
+##### Array
+
+When only used to store numbers, array is more efficient than list.
+
+Array provides fast loading and saving data function such as *frombytes* and *tofile*
+
+##### Memory View
+
+Memory view is inspired by NumPy, it will change the way multiple bytes are read or written as units
+
+##### Deque
+
+**Thread-safe** double-ended queue.
+
