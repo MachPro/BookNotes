@@ -380,3 +380,57 @@ Flat data types like *str*, *bytes*, *int* are all hashable
 
 *tuple*, even it is immutale, can only be hashable when all its elements are hashable
 
+## Function
+
+#### Treat Function as Object
+
+We can create function at runtime, assign it to variable, pass it as argument as normal object.
+
+```python
+def square(n):
+    return n * n
+sq = square
+sq(2)
+sq.__doc__
+type(sq)
+```
+
+#### High-Order Function
+
+High-order functions are functions take function as arguments or return functions as results
+
+```python
+# sorted is a high0-order function
+data = ['a', 'b', 'c', 'aa']
+# use length as sorting matrix, here len is a function return the length
+sorted(data, key=len)
+
+def reverse(word): return word[::-1]
+
+sorted(data, key=reverse)
+```
+
+##### map, filter, reduce
+
+map, filter can be replaced by list comp and generator expression
+
+```python
+list(map(square, range(4)))
+[square(i) for i in range(4)]
+
+list(map(square, filter(lambda i: i % 2, range(4))))
+[square(i) for i in range(4) if i % 2]
+```
+
+common examples implementing reduce
+
+```python
+sum(range(10))
+all([True, False, True])
+any([True, False, True])
+```
+
+#### Anonymous Function
+
+We use lambda to create anoymous function in Python
+
