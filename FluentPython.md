@@ -434,3 +434,73 @@ any([True, False, True])
 
 We use lambda to create anoymous function in Python
 
+#### Callable Objects
+
+* User defined functions: created with *def*
+
+* Built-in functions: len
+
+* Built-in methods: dict.get()
+
+* Methods: defined in class
+
+* Classes: class can be used as function to create new instance
+
+* Class instances: if implemented \_\_call\_\_ method in class, instances can be used as functions
+
+  ```python
+  class CallableClass:
+      def __init__(self, state):
+          self._state = state
+  
+      def update(self):
+          self._state += 1
+  
+      def __call__(self):
+          return self.update()
+  
+  clz = CallableClass()
+  clz()
+  ```
+
+* Generator functions: functions which uses the yield keyword
+
+#### Function Introspection
+
+Functions, like normal objects, have multiple attributes
+
+```python
+square.__name__
+square.__code__
+square.__annotation__
+square.__doc__
+```
+
+#### Positional and Keyword-only Arguments
+
+```python
+def function(position, *list_params, keyword_only, **dict_params,): pass
+
+function(1, 2, 3, 4, keyword_only=5, a=6, b=7)
+# position will be 1
+# list_params is positional params with value (2, 3, 4)
+# keyword_only will be 5
+# dict_params will be {a:6, b:7}
+
+# we cannot put positional arguments after keyword_only arguments
+function(1, keyword_only=2, 3, 4)
+```
+
+#### Function Annotation
+
+Python 3 provides annotation to function signature
+
+```python
+# indicate the type of return val, type and restriction on params
+def square(n:'int > 0'=1) -> int:
+        return n * n
+
+# the annotation will be stored at the __annotation__ attribute
+square.__annotation__
+```
+
